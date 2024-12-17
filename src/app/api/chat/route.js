@@ -8,7 +8,7 @@ export async function POST(req) {
         const model = genAI.getGenerativeModel({
             model: "gemini-1.5-flash",
             systemInstruction:
-                "Use the React function 'App' without any import or export statements, and ensure all styles are defined inline",
+                "Always Use the React function 'App' without any import or export statements, and ensure all styles are defined inline",
         });
 
         const chat = model.startChat({ history });

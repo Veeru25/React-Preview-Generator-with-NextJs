@@ -4,7 +4,7 @@ import { signIn } from "../auth"
 
 
 export const loginAction = async (loginDetails) => {
-    console.log("loginDetails",loginDetails)
+    // console.log("loginDetails",loginDetails)
     try {
         await signIn("credentials",{
             email:loginDetails.email,

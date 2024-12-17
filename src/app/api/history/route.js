@@ -33,7 +33,7 @@ export const POST = async (req) => {
 
         // Save the document to the database
         const savedHistory = await newHistory.save();
-        console.log("History saved successfully:", savedHistory);
+        // console.log("History saved successfully:", savedHistory);
 
         return new Response(JSON.stringify({ success: true, data: savedHistory }), { status: 201 });
     } catch (error) {
@@ -62,12 +62,12 @@ export const GET = async (req) => {
             const history = await HistoryModel.findById(id);
 
             if (!history) {
-                return new Response(JSON.stringify({ success: false, error: "History not found" }), {
+                return new Response(JSON.stringify({ success: false, error: "History not found"  , data: "History not found" }), {
                     status: 404,
                 });
             }
 
-            console.log("History fetched successfully:", history);
+            // console.log("History fetched successfully:", history);
             return new Response(JSON.stringify({ success: true, data: history.toObject() }), { status: 200 });
         }
 
@@ -84,5 +84,42 @@ export const GET = async (req) => {
         return new Response(JSON.stringify({ success: false, error: "Internal Server Error" }), {
             status: 500,
         });
+    }
+};
+
+export const DELETE = async (req) => {
+    console.log("API route accessed: DELETE");
+
+    try {
+        const body = await req.json();
+        const { id, userId } = body;
+
+        if (!userId || !id) {
+            return new Response(
+                JSON.stringify({ success: false, error: "userId and chatId are required" }),
+                { status: 400 }
+            );
+        }
+
+        await DBConnection;
+        console.log("Database connection successful");
+
+        // Find and delete the history document based on userId and chatId
+        const deletedHistory = await HistoryModel.findOneAndDelete({
+            _id: id,
+            userId: userId,
+        });
+
+        if (!deletedHistory) {
+            return new Response(
+                JSON.stringify({ success: false, error: "Chat not found or not owned by user" }),
+                { status: 404 }
+            );
+        }
+
+        return new Response(JSON.stringify({ success: true, message: "Chat deleted successfully" }), { status: 200 });
+    } catch (error) {
+        console.error("Error in DELETE handler:", error);
+        return new Response(JSON.stringify({ success: false, error: "Internal Server Error" }), { status: 500 });
     }
 };

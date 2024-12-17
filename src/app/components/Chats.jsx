@@ -5,30 +5,63 @@ import React, { useState, useEffect } from 'react';
 // import { useRouter } from 'next/router';
 import Markdown from 'markdown-to-jsx';
 import ClipLoader from 'react-spinners/ClipLoader';
-import {  TextField , Modal , Tooltip , CircularProgress } from '@mui/material';
+import { TextField, Modal, Tooltip, CircularProgress } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add'; // Plus icon
+import NearMeIcon from '@mui/icons-material/NearMe';
 import { useSearchParams } from 'next/navigation';
 import styles from './chats.module.css';
-// import { auth } from '../auth';
 
-export default function Chats({ userSession, setHistoryData}) {
+export default function Chats({ userSession, setHistoryData }) {
+
   const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const [, set] = useState(false)
   const [savedHistory, setSavedHistory] = useState([]);
   const searchParams = useSearchParams();
-  // const router = useRouter();
+  const [initialHistory, setInitialHistory] = useState([]);
 
+  // useEffect(() => {
+  //   const query = Object.fromEntries(searchParams.entries());
+  //   // console.log("Query", query?.id)
 
+  //   if (query?.id) {
+  //     const endPoint = `http://localhost:3004/api/history?id=${query?.id}`
+  //     // console.log('URL HAS ID')
+
+  //     fetch(endPoint)
+  //       .then((response) => {
+  //         if (!response.ok) {
+  //           throw new Error(`HTTP error! status: ${response.status}`);
+  //         }
+  //         return response.json();
+  //       })
+  //       .then((res) => {
+  //         // console.log('Fetched Data:', res?.data?.messages);
+  //         setHistory(res?.data?.messages);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error fetching chat history:', error);
+  //       });
+  //   } else {
+  //     const storedHistory = localStorage.getItem('chatHistory');
+
+  //     if (storedHistory) {
+  //       try {
+  //         const parsedHistory = JSON.parse(storedHistory);
+  //         setSavedHistory(parsedHistory);
+  //         setHistory(parsedHistory);
+  //       } catch (error) {
+  //         console.error('Error parsing chat history:', error);
+  //       }
+  //     }
+  //   }
+  // }, [searchParams]);
   useEffect(() => {
     const query = Object.fromEntries(searchParams.entries());
-    // console.log("Query", query?.id)
-
+  
     if (query?.id) {
-      const endPoint = `http://localhost:3004/api/history?id=${query?.id}`
-      // console.log('URL HAS ID')
-
+      const endPoint = `http://localhost:3004/api/history?id=${query?.id}`;
+  
       fetch(endPoint)
         .then((response) => {
           if (!response.ok) {
@@ -37,20 +70,22 @@ export default function Chats({ userSession, setHistoryData}) {
           return response.json();
         })
         .then((res) => {
-          // console.log('Fetched Data:', res?.data?.messages);
-          setHistory(res?.data?.messages);
+          const fetchedMessages = res?.data?.messages || [];
+          setHistory(fetchedMessages);
+          setInitialHistory(fetchedMessages); // Save the initial state
         })
         .catch((error) => {
           console.error('Error fetching chat history:', error);
         });
     } else {
       const storedHistory = localStorage.getItem('chatHistory');
-
+  
       if (storedHistory) {
         try {
           const parsedHistory = JSON.parse(storedHistory);
           setSavedHistory(parsedHistory);
           setHistory(parsedHistory);
+          setInitialHistory(parsedHistory); // Save the initial state
         } catch (error) {
           console.error('Error parsing chat history:', error);
         }
@@ -86,6 +121,8 @@ export default function Chats({ userSession, setHistoryData}) {
       return { ...rest, parts: updatedParts };  // Return the item without the _id and with updated parts
     });
 
+
+
     // console.log(historyWithoutId);
 
     const updatedHistory = [...historyWithoutId, userObj];
@@ -119,20 +156,88 @@ export default function Chats({ userSession, setHistoryData}) {
     setInput(e.target.value);
   };
 
+  
+  const isHistoryChanged =  (initial, current) => {
+    return JSON.stringify(initial) !== JSON.stringify(current);
+  };
 
+
+
+  // const onNewChat = async () => {
+
+  //   const userId = await userSession?.user?.id
+
+  //   // console.log(history[0].parts[0].text);
+
+  //   // console.log(userId)
+
+  //   // console.log(history)
+  //   // return;
+
+  //   try {
+  //     const response = await fetch('/api/history', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         userId, // Replace with the current user's ID
+  //         chatName: history[0].parts[0].text, // Optional: Customize the chat name
+  //         messages: history, // The chat history array
+  //       }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`Error: ${response.status}`);
+  //     } 
+
+  //     const data = await response.json();
+
+  //     console.log("Chat saved successfully:", data);
+
+
+  //     setHistory([]);
+  //     setInput("");
+  //     setLoading(false);
+  //     localStorage.removeItem('chatHistory');
+
+
+  //     setHistoryData(prevData => {
+  //       return [
+  //         ...prevData,
+  //         {
+  //           "_id": data?.data?._id,
+  //           "chatName": history[0].parts[0].text
+  //         }
+  //       ]
+  //     })
+
+  //     // router.push('/target-page');
+  //     window.location.href = '/';
+
+  //     // alert("Chat saved successfully!");
+
+
+  //   } catch (error) {
+  //     console.error("Error saving chat:", error);
+  //     alert("Failed to save chat. Please try again.");
+  //   }
+
+  // };
 
   const onNewChat = async () => {
-
-    const userId = await userSession?.user?.id
-
-    // console.log(history[0].parts[0].text);
-
-    console.log(userId)
-
-    // console.log(history)
-    // return;
-
-
+    // Check if any changes are made to the history
+    if (!isHistoryChanged(initialHistory, history)) {
+      console.log("No changes detected. Skipping save operation.");
+      setHistory([]); // Clear the current history
+      setInput("");
+      localStorage.clear()
+      window.location.href = '/';
+      return;
+    }
+  
+    const userId = await userSession?.user?.id;
+    
     try {
       const response = await fetch('/api/history', {
         method: 'POST',
@@ -141,51 +246,41 @@ export default function Chats({ userSession, setHistoryData}) {
         },
         body: JSON.stringify({
           userId, // Replace with the current user's ID
-          chatName: history[0].parts[0].text, // Optional: Customize the chat name
+          chatName: history[0]?.parts[0]?.text || "Untitled Chat", // Customize the chat name
           messages: history, // The chat history array
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-
+  
       const data = await response.json();
-
+  
       console.log("Chat saved successfully:", data);
-
-
+  
       setHistory([]);
       setInput("");
       setLoading(false);
       localStorage.removeItem('chatHistory');
-
-
-      setHistoryData(prevData => {
-        return [
-          ...prevData,
-          {
-            "_id": data?.data?._id,
-            "chatName": history[0].parts[0].text
-          }
-        ]
-      })
-
-      // router.push('/target-page');
+  
+      setHistoryData(prevData => [
+        ...prevData,
+        {
+          "_id": data?.data?._id,
+          "chatName": history[0]?.parts[0]?.text || "Untitled Chat",
+        },
+      ]);
+      
       window.location.href = '/';
-
-      // alert("Chat saved successfully!");
-
-
+     
     } catch (error) {
       console.error("Error saving chat:", error);
       alert("Failed to save chat. Please try again.");
     }
-
   };
-
-
-
+  
+  
   const CodeWithPreview = ({ code }) => {
     const [openModal, setOpenModal] = useState(false);
     const [iframeContent, setIframeContent] = useState('');
@@ -267,46 +362,11 @@ export default function Chats({ userSession, setHistoryData}) {
     );
   };
 
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.reactHeading}>React Code and Preview Generator</h1>
-      <div className={styles.header}>
-        <Tooltip title="New Chat" arrow>
-          <button
-            className={styles.newChatBtn}
-            variant="contained"
-            size="large"
-            onClick={onNewChat}
-            aria-label="Start a new chat"
-          >
-            <AddIcon />
-          </button>
-        </Tooltip>
-        <TextField
-          className={styles.inputField}
-          variant="outlined"
-          label="Ask Here..."
-          value={input}
-          onChange={handleInput}
-        />
-
-        <button
-          className={styles.sendBtn}
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={onSend}
-        >
-          {loading ? <ClipLoader color="#fff" size={20} /> : 'SEND'}
-        </button>
-      </div>
-
-      
-
       <div
-        className={`${styles.chatHistory} ${history.length > 0 ? styles.chatHistoryWithPadding : ''
-          }`}
-      >
+        className={`${styles.chatHistory} ${history.length > 0 ? styles.chatHistoryWithPadding : ''}`}>
         {history.map((el, index) => (
           <div key={index} className={styles.messageContainer}>
             <div
@@ -348,6 +408,69 @@ export default function Chats({ userSession, setHistoryData}) {
             <span className={styles.spanLoading}>...Loading</span>
           </div>
         )}
+      </div>
+
+      <div className={styles.header}>
+
+        {/* <Tooltip title="New Chat" arrow>
+          <button
+            className={styles.newChatBtn}
+            variant="contained"
+            size="large"
+            onClick={onNewChat}
+            aria-label="Start a new chat"
+          >
+            <AddIcon />
+          </button>
+        </Tooltip> */}
+
+        {history.length > 0 && (
+          <Tooltip title="New Chat" arrow>
+            <button
+              className={styles.newChatBtn}
+              variant="contained"
+              size="large"
+              onClick={onNewChat}
+              aria-label="Start a new chat"
+            >
+              <AddIcon />
+            </button>
+          </Tooltip>
+        )}
+
+
+
+        <TextField
+          className={styles.inputField}
+          variant="outlined"
+          label="Ask Here..."
+          value={input}
+          onChange={handleInput}
+        />
+
+        <Tooltip title="Send" arrow>
+          <button
+            className={styles.sendBtn}
+            variant="contained"
+            size="large"
+            onClick={onSend}
+            aria-label="Send a message"
+            disabled={loading}
+          >
+            {loading ? <ClipLoader color="#fff" size={20} /> : <NearMeIcon />}
+
+          </button>
+        </Tooltip>
+        {/* 
+        <button
+          className={styles.sendBtn}
+          variant="contained"
+          size="large"
+          onClick={onSend}
+        >
+          {loading ? <ClipLoader color="#fff" size={20} /> : 'SEND'}
+        </button> */}
+
       </div>
 
     </div>

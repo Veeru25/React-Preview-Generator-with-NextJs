@@ -21,7 +21,7 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const registerDetails = { username, email, password };
-    console.log("registerDetails", registerDetails);
+    // console.log("registerDetails", registerDetails);
     await registerAction(registerDetails);
     router.push("/login");
   };

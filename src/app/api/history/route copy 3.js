@@ -69,7 +69,7 @@ export const GET = async (req) => {
                 });
             }
 
-            console.log("History fetched successfully:", history);
+            console.log(":", history);
             return new Response(JSON.stringify({ success: true, data: history }), { status: 200 });
         }
 

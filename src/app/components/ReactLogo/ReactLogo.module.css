@@ -1,0 +1,21 @@
+/* React logo animation for a small size */
+.reactLogo {
+    display: inline-block;
+    margin-right: 5px; /* Spacing from the text */
+    animation: rotateLogo 2s infinite linear;
+    fill: #61dafb; /* React blue color */
+    width: 40px; /* Adjust size */
+    height: 40px; /* Adjust size */
+    margin-left: 15px;
+  }
+  
+  /* Rotate the logo */
+  @keyframes rotateLogo {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  

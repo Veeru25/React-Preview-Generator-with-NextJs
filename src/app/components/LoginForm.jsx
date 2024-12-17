@@ -15,7 +15,7 @@ const LoginPage =  () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const loginDetails = { email, password };
-    console.log("loginDetails", loginDetails);
+    // console.log("loginDetails", loginDetails);
     await loginAction(loginDetails);
     router.push("/");
   };

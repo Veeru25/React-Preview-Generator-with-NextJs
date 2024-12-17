@@ -1,21 +1,22 @@
-// "use client"
 
 import { redirect } from "next/navigation";
 import { auth } from "./auth";
 import Link from "next/link";
-import History from "./components/History";
-import Chats from "./components/Chats";
 import ChatWrapper from "./components/ChatWrapper";
+import SmallReactLogo from "./components/ReactLogo/SmallReactLogo";
 
 const Home = async () => {
+  
   const session = await auth();
-  console.log(session)
-  // console.log( "sessionEmail",sessionEmail)
+
+  // console.log("session",session)   // Session fetched Here
+
   if (!session) {
     redirect("/login");
   }
+
   return (
-    <div>
+    <>
       <header
         style={{
           display: "flex",
@@ -26,7 +27,11 @@ const Home = async () => {
           backgroundColor:"#f0f4f8"
         }}
       >
-        <p> </p>
+        <div>
+          
+        <SmallReactLogo userSession={session}/>
+        </div>
+        
         <Link href="/api/auth/signout">
           <button
             style={{
@@ -34,18 +39,22 @@ const Home = async () => {
               width: "110px",
               backgroundColor: "black",
               color: "white",
+              height:"5vh",
               borderRadius: "6px",
               cursor: "pointer",
+              display:"flex",
+              justifyContent:"center",
+              alignItems:"center",
             }}
           >
             Logout
           </button>
         </Link>
       </header>
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex"  , height:"95vh"}}>
         <ChatWrapper userSession={session}/>
       </div>
-    </div>
+    </>
   );
 };
 export default Home;
