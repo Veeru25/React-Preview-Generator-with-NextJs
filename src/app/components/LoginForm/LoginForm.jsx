@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { loginAction } from "../serverActions/loginAction";
+import { loginAction } from "../../serverActions/loginAction";
 import { useRouter } from "next/navigation";
 import styles from "./LoginForm.module.css";
 

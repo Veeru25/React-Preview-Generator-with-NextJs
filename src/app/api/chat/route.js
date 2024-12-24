@@ -21,7 +21,7 @@ export async function POST(req) {
     } catch (error) {
         console.error('Error:', error);
         return new Response(
-            JSON.stringify({ error: 'Failed to process the request' , message : "Failed to fetch the data. Please try again." }),
+            JSON.stringify({ error: 'Failed to process the request' , message : "Failed to fetch the data. Please try again 😊." }),
             { status: 500, headers: { 'Content-Type': 'application/json' } }
         );
     }

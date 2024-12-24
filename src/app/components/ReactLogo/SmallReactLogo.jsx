@@ -1,12 +1,16 @@
-// "use client"
+"use client"
 
 import React from "react";
 import styles from "./ReactLogo.module.css";
+import { useUserSession } from "@/app/context/UserSessionContext";
 
-const SmallReactLogo = async (userSession) => {
+const SmallReactLogo =  () => {
+
 
   // console.log(userSession)
-  const user = await userSession?.userSession?.user?.name;
+  const session = useUserSession()
+  
+  const user = session?.user?.name;
 
   return (
     <span style={{display:"flex" , justifyContent:"center" , alignItems:"center"}}>

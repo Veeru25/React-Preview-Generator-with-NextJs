@@ -3,7 +3,7 @@
     display: inline-block;
     margin-right: 5px; /* Spacing from the text */
     animation: rotateLogo 2s infinite linear;
-    fill: #61dafb; /* React blue color */
+    fill: #000; /* React blue color */
     width: 40px; /* Adjust size */
     height: 40px; /* Adjust size */
     margin-left: 15px;

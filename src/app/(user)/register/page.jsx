@@ -1,5 +1,5 @@
 // import { auth } from "@/app/auth";
-import RegisterPage from "@/app/components/RegisterForm";
+import RegisterPage from "@/app/components/RegisterForm/RegisterForm";
 // import { redirect } from "next/navigation";
 
 const Login = async () => {

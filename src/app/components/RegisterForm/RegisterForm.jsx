@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { registerAction } from "../serverActions/registerAction";
+import { registerAction } from "../../serverActions/registerAction";
 import { useRouter } from "next/navigation";
 import styles from "./RegisterForm.module.css";
 
@@ -12,11 +12,6 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
 
   const router = useRouter();
-
-//   const redirectToLogin = (e) => {
-//     e.preventDefault();
-//     router.push("/login");
-//   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
