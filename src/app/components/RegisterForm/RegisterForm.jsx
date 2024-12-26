@@ -18,7 +18,7 @@ const RegisterPage = () => {
     const registerDetails = { username, email, password };
     // console.log("registerDetails", registerDetails);
     await registerAction(registerDetails);
-    router.push("/login");
+    router.push("https://react-preview-generator-with-next-js.vercel.app/login");
   };
 
   return (

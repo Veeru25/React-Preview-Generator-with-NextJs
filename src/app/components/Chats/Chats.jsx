@@ -1,36 +1,31 @@
-
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion , AnimatePresence } from "framer-motion";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { motion, AnimatePresence } from "framer-motion";
+import { vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 // import { useRouter } from 'next/router';
 import Markdown from 'markdown-to-jsx';
 import ClipLoader from 'react-spinners/ClipLoader';
-import { TextField, Modal, Tooltip, CircularProgress } from '@mui/material';
+import { Tooltip, CircularProgress , Modal } from '@mui/material';
 // import AddIcon from '@mui/icons-material/Add'; // Plus icon
 import NearMeIcon from '@mui/icons-material/NearMe';
 import { useSearchParams } from 'next/navigation';
 import styles from './chats.module.css';
 import { useUserSession } from '@/app/context/UserSessionContext';
+import { useHistoryContext } from '@/app/context/HistoryContext';
 
-export default function Chats({ historyData, setHistoryData }) {
+export default function Chats({ historyData , setHistoryData }) {
 
   const session = useUserSession()
-
+  const { setHistoryLength } = useHistoryContext()
   const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [savedHistory, setSavedHistory] = useState([]);
   const searchParams = useSearchParams();
   const [initialHistory, setInitialHistory] = useState([]);
-
-
-  const inputVariants = {
-    initial: { scale: 0.9, opacity: 0 },
-    animate: { scale: 1, opacity: 1, transition: { duration: 0.5 } },
-    focus: { scale: 1.05, transition: { duration: 0.3 } },
-  };
 
   // Animation variants for the button
   const buttonVariants = {
@@ -43,7 +38,7 @@ export default function Chats({ historyData, setHistoryData }) {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
     exit: { opacity: 0, y: -50, transition: { duration: 0.3, ease: "easeIn" } },
   };
-   const messageVariants = {
+  const messageVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: (i) => ({
       opacity: 1,
@@ -51,38 +46,15 @@ export default function Chats({ historyData, setHistoryData }) {
       transition: { delay: i * 0.1, duration: 0.4 },
     }),
   };
-  // const containerVariants = {
-  //   hidden: { opacity: 0, y: 50 },
-  //   visible: {
-  //     opacity: 1,
-  //     y: 0,
-  //     transition: {
-  //       duration: 0.5,
-  //       ease: "easeOut",
-  //       staggerChildren: 0.1,
-  //     },
-  //   },
-  // };
- 
-  // const messageVariants = {
-  //   hidden: { opacity: 0, scale: 0.8 },
-  //   visible: (i) => ({
-  //     opacity: 1,
-  //     scale: 1,
-  //     transition: { type: "spring", stiffness: 100, damping: 10, delay: i * 0.1 },
-  //   }),
-  // };
-
-  const toggleTab = () => setIsTabOpen((prev) => !prev);
-
-  
-
+  useEffect(() => {
+    setHistoryLength(history.length);
+  }, [history, setHistoryLength]);
 
   useEffect(() => {
     const query = Object.fromEntries(searchParams.entries());
 
     if (query?.id) {
-      const endPoint = `http://localhost:3000/api/history?id=${query?.id}`;
+      const endPoint = `https://react-preview-generator-with-next-js.vercel.app/api/history?id=${query?.id}`;
 
       fetch(endPoint)
         .then((response) => {
@@ -107,7 +79,7 @@ export default function Chats({ historyData, setHistoryData }) {
           const parsedHistory = JSON.parse(storedHistory);
           setSavedHistory(parsedHistory);
           setHistory(parsedHistory);
-          setInitialHistory(parsedHistory); // Save the initial state
+          setInitialHistory(parsedHistory); 
         } catch (error) {
           console.error('Error parsing chat history:', error);
         }
@@ -122,259 +94,6 @@ export default function Chats({ historyData, setHistoryData }) {
     }
   }, [history]);
 
-  // const onSend = async () => {
-  //   if (!input.trim()) return;
-
-
-  //   const userObj = {
-  //     role: 'user',
-  //     parts: [{ text: input }],
-  //   };
-
-  //   const historyWithoutId = history.map(item => {
-  //     const { _id, parts, ...rest } = item;
-  //     const updatedParts = parts.map(part => {
-  //       const { _id, ...restPart } = part;
-  //       return restPart;
-  //     });
-
-  //     return { ...rest, parts: updatedParts };
-  //   });
-
-  //   const updatedHistory = [...historyWithoutId, userObj];
-  //   setHistory(updatedHistory);
-  //   setInput('');
-  //   setLoading(true);
-
-  //   try {
-  //     const response = await fetch('/api/chat', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ message: input, history: updatedHistory }),
-  //     });
-
-  //     const data = await response.json();
-  //     const resObj = {
-  //       role: 'model',
-  //       parts: [{ text: data.message }],
-  //     };
-
-  //     const newHistory = [...updatedHistory, resObj];
-  //     setHistory(newHistory);
-
-  //     // Save the updated history to /api/history
-  //     const userId = await userSession?.user?.id;
-
-  //     try {
-  //       const saveResponse = await fetch('/api/history/', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({
-  //           userId,
-  //           chatName: newHistory[0]?.parts[0]?.text || "Untitled Chat",
-  //           messages: newHistory,
-  //         }),
-  //       });
-
-  //       if (!saveResponse.ok) {
-  //         throw new Error(`Error: ${saveResponse.status}`);
-  //       }
-
-  //       const saveData = await saveResponse.json();
-  //       console.log("Chat saved successfully:", saveData);
-
-  //       setHistoryData(prevData => [
-  //         ...prevData,
-  //         {
-  //           "_id": saveData?.data?._id,
-  //           "chatName": newHistory[0]?.parts[0]?.text || "Untitled Chat",
-  //         },
-  //       ]);
-  //     } catch (error) {
-  //       console.error("Error saving chat history:", error);
-  //     }
-
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  //   setLoading(false);
-  // };
-
-
-
-  //first
-  // const onSend = async () => {
-  //   if (!input.trim()) return;
-
-  //   const userObj = {
-  //     role: 'user',
-  //     parts: [{ text: input }],
-  //   };
-
-  //   // console.log(history)
-
-  //   const historyWithoutId = history.map(item => {
-  //     // Remove the _id from the main object and from each part in the parts array
-  //     const { _id, parts, ...rest } = item;
-  //     const updatedParts = parts.map(part => {
-  //       const { _id, ...restPart } = part;
-  //       return restPart;  // Return the part without the _id
-  //     });
-
-  //     return { ...rest, parts: updatedParts };  // Return the item without the _id and with updated parts
-  //   });
-
-  //   // console.log(historyWithoutId);
-
-  //   const updatedHistory = [...historyWithoutId, userObj];
-  //   setHistory(updatedHistory);
-  //   setInput('');
-  //   setLoading(true);
-
-  //   try {
-  //     const response = await fetch('/api/chat', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ message: input, history: updatedHistory }),
-  //     });
-
-  //     const data = await response.json();
-  //     const resObj = {
-  //       role: 'model',
-  //       parts: [{ text: data.message }],
-  //     };
-
-  //     setHistory((prevState) => [...prevState, resObj]);
-
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  //   setLoading(false);
-  // };
-
-
-  // second
-
-
-  // const onSend = async () => {
-  //   if (!input.trim()) return;
-
-  //   const userObj = {
-  //     role: 'user',
-  //     parts: [{ text: input }],
-  //   };
-
-  //   const historyWithoutId = history.map(item => {
-  //     const { _id, parts, ...rest } = item;
-  //     const updatedParts = parts.map(part => {
-  //       const { _id, ...restPart } = part;
-  //       return restPart;
-  //     });
-
-  //     return { ...rest, parts: updatedParts };
-  //   });
-
-  //   const updatedHistory = [...historyWithoutId, userObj];
-  //   setHistory(updatedHistory);
-  //   setInput('');
-  //   setLoading(true);
-
-  //   try {
-  //     const response = await fetch('/api/chat', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ message: input, history: updatedHistory }),
-  //     });
-
-  //     const data = await response.json();
-  //     const resObj = {
-  //       role: 'model',
-  //       parts: [{ text: data.message }],
-  //     };
-
-  //     const newHistory = [...updatedHistory, resObj];
-  //     setHistory(newHistory);
-
-  //     // Save or update the chat history
-  //     const userId = await userSession?.user?.id;
-
-  //     try {
-  //       // Check if chat is already saved by checking chat name or other criteria
-  //       console.log(historyData.chatName)
-  //       const existingChat = historyData.find(chat => chat.chatName === newHistory[0]?.parts[0]?.text);
-
-  //       if (existingChat) {
-  //         // If the chat already exists, update the messages
-  //         const updateResponse = await fetch(`/api/history/${existingChat._id}`, {
-  //           method: 'PUT',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //             userId,
-  //             chatName: newHistory[0]?.parts[0]?.text,
-  //             messages: newHistory,
-  //           }),
-  //         });
-
-  //         if (!updateResponse.ok) {
-  //           throw new Error(`Error: ${updateResponse.status}`);
-  //         }
-
-  //         const updateData = await updateResponse.json();
-  //         console.log("Chat updated successfully:", updateData);
-
-  //         // Optionally, update the historyData to reflect changes
-  //         setHistoryData(prevData =>
-  //           prevData.map(chat =>
-  //             chat._id === existingChat._id ? { ...chat, chatName: newHistory[0]?.parts[0]?.text } : chat
-  //           )
-  //         );
-  //       } else {
-  //         // If the chat doesn't exist, create a new one
-  //         const saveResponse = await fetch('/api/history/', {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //             userId,
-  //             chatName: newHistory[0]?.parts[0]?.text || "Untitled Chat",
-  //             messages: newHistory,
-  //           }),
-  //         });
-
-  //         if (!saveResponse.ok) {
-  //           throw new Error(`Error: ${saveResponse.status}`);
-  //         }
-
-  //         const saveData = await saveResponse.json();
-  //         console.log("Chat saved successfully:", saveData);
-
-  //         setHistoryData(prevData => [
-  //           ...prevData,
-  //           {
-  //             "_id": saveData?.data?._id,
-  //             "chatName": newHistory[0]?.parts[0]?.text || "Untitled Chat",
-  //           },
-  //         ]);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error saving or updating chat history:", error);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  //   setLoading(false);
-  // };
 
   const onSend = async () => {
     if (!input.trim()) return;
@@ -399,8 +118,7 @@ export default function Chats({ historyData, setHistoryData }) {
     setLoading(true);
 
     try {
-      // Send the message to the chat API
-      const response = await fetch('/api/chat', {
+      const response = await fetch('https://react-preview-generator-with-next-js.vercel.app/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: input, history: updatedHistory }),
@@ -412,17 +130,15 @@ export default function Chats({ historyData, setHistoryData }) {
         parts: [{ text: data.message }],
       };
 
-      // Update the history with the model's response
       const finalHistory = [...updatedHistory, resObj];
       setHistory(finalHistory);
 
-      const userId = session?.user?.id; // Assuming `userSession` is defined elsewhere
+      const userId = session?.user?.id; 
       const chatName = finalHistory[0]?.parts[0]?.text || "Untitled Chat";
 
-      // Determine whether to create or update the history
       const isNewChat = history.length === 0;
-
-      const historyResponse = await fetch('/api/history/', {
+      
+      const historyResponse = await fetch('https://react-preview-generator-with-next-js.vercel.app/api/history', {
         method: isNewChat ? 'POST' : 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, chatName, messages: finalHistory }),
@@ -445,77 +161,9 @@ export default function Chats({ historyData, setHistoryData }) {
     setLoading(false);
   };
 
-
-  const handleInput = (e) => {
-    setInput(e.target.value);
-  };
-
-  // const onNewChat = async () => {
-
-
-  //   const userId = await userSession?.user?.id;
-
-  //   // Check if any changes are made to the history
-  //   if (!isHistoryChanged(initialHistory, history)) {
-  //     console.log("No changes detected. Skipping save operation.");
-  //     setHistory([]); // Clear the current history
-  //     setInput("");
-  //     localStorage.clear()
-  //     window.location.href = '/';
-  //     return;
-  //   }
-
-
-  //   try {
-  //     const response = await fetch('/api/history/', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         userId, // Replace with the current user's ID
-  //         chatName: history[0]?.parts[0]?.text || "Untitled Chat", // Customize the chat name
-  //         messages: history, // The chat history array
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error(`Error: ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-
-  //     console.log("Chat saved successfully:", data);
-
-  //     setHistory([]);
-  //     setInput("");
-  //     setLoading(false);
-  //     localStorage.removeItem('chatHistory');
-
-  //     setHistoryData(prevData => [
-  //       ...prevData,
-  //       {
-  //         "_id": data?.data?._id,
-  //         "chatName": history[0]?.parts[0]?.text || "Untitled Chat",
-  //       },
-  //     ]);
-
-  //     window.location.href = '/';
-
-  //   } catch (error) {
-  //     console.error("Error saving chat:", error);
-  //     alert("Failed to save chat. Please try again.");
-  //   }
+  // const handleInput = (e) => {
+  //   setInput(e.target.value);
   // };
-
-
-
-
-  // const isHistoryChanged =  (initial, current) => {
-  //   return JSON.stringify(initial) !== JSON.stringify(current);
-  // };
-
-
 
   const CodeWithPreview = ({ code }) => {
     const [openModal, setOpenModal] = useState(false);
@@ -561,15 +209,19 @@ export default function Chats({ historyData, setHistoryData }) {
             <button
               className={styles.copyButton}
               onClick={() => navigator.clipboard.writeText(code)}
+              style={{display:"flex",justifyContent:"center",alignItems:"center"}}
             >
-              &#x2398;
+              {/* &#x2398; */}
+              <ContentCopyIcon style={{ fontSize: "18px" }}/>
             </button>
           </Tooltip>
         </div>
-
-        <pre>
-          <code>{code}</code>
-        </pre>
+        <SyntaxHighlighter language="jsx"
+         style={vs}
+        // style={dracula} 
+         className={styles.codeBlock}>
+          {code}
+        </SyntaxHighlighter>
         <div className={styles.previewButtonContainer}>
           <button className={styles.previewButton} onClick={handlePreviewToggle}>
             {openModal ? 'Close Preview' : 'Preview Output'}
@@ -594,7 +246,9 @@ export default function Chats({ historyData, setHistoryData }) {
             ></iframe>
           </div>
         </Modal>
+        
       </div>
+      
     );
   };
 
@@ -707,46 +361,42 @@ export default function Chats({ historyData, setHistoryData }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <ClipLoader color="#4A90E2" size={15} />
+            <ClipLoader color="#4A4A4D" size={15} />
             <span className={styles.spanLoading}>...Loading</span>
           </motion.div>
         )}
       </motion.div>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }} className={styles.header} >
+        <input
+          type="text"
+          value={input}
+          // onChange={handleInput}
+          onChange={(e)=>setInput(e.target.value)}
+          placeholder="Ask Here..."
+          // variants={inputVariants}
+          initial="initial"
+          // animate="animate"
+          // whileFocus="focus"
 
+          style={{
+            color:"#4A4A4D",
+            backgroundColor:"#f5f5f5",
+            // backgroundColor: "#E4E4E6",
+            width: "85%",
+            marginRight: "20px",
+            padding: "10px 15px",
+            borderRadius: "10px",
+            border: "0px solid #4A4A4D",
+            fontSize: "16px",
+            outline: "none",
+            // transition: "border-color 0.3s ease",
+          }}
+          // onFocus={(e) => (e.target.style.borderColor = "#61dafb")}
+          // onBlur={(e) => (e.target.style.borderColor = "#ccc")}
+        />
 
-
-
-
-      <div  style={{ display: "flex", alignItems: "center", gap: "10px" }} className={styles.header} >
-
-        
-
-
-<motion.input
-        type="text"
-        value={input}
-        onChange={handleInput}
-        placeholder="Ask Here..."
-        variants={inputVariants}
-        initial="initial"
-        animate="animate"
-        whileFocus="focus"
-        style={{
-          width: "900px", // Set the desired width here
-          marginRight:"20px",
-          padding: "10px 15px",
-          borderRadius: "5px",
-          border: "1px solid #61dafb",
-          fontSize: "16px",
-          outline: "none",
-          transition: "border-color 0.3s ease",
-        }}
-        onFocus={(e) => (e.target.style.borderColor = "#61dafb")}
-        onBlur={(e) => (e.target.style.borderColor = "#ccc")}
-      />
-
-      {/* Send Button */}
-      {/* <Tooltip title="Send" arrow> */}
+        {/* Send Button */}
+        {/* <Tooltip title="Send" arrow> */}
         <motion.button
           className="send-btn"
           onClick={onSend}
@@ -759,7 +409,7 @@ export default function Chats({ historyData, setHistoryData }) {
             padding: "10px",
             borderRadius: "50%",
             border: "none",
-            backgroundColor: "#61dafb",
+            backgroundColor: "#4A4A4D",
             color: "#fff",
             cursor: loading ? "not-allowed" : "pointer",
             display: "flex",
@@ -770,7 +420,7 @@ export default function Chats({ historyData, setHistoryData }) {
         >
           {loading ? <ClipLoader color="#fff" size={20} /> : <NearMeIcon />}
         </motion.button>
-      {/* </Tooltip> */}
+        {/* </Tooltip> */}
 
 
         {/* ---------crt */}
@@ -796,10 +446,9 @@ export default function Chats({ historyData, setHistoryData }) {
           </button> 
         </Tooltip>*/}
 
-        
+
       </div>
 
     </div>
   );
 }
-

@@ -76,12 +76,12 @@ export const GET = async (req) => {
         // Fetch all history records
         let histories = (await HistoryModel.find({userId}));
 
-        console.log("Fetched histories:", histories);
+        // console.log("Fetched histories:", histories);
 
    
 
         // Log filtered histories
-        console.log("Filtered histories:", histories);
+        // console.log("Filtered histories:", histories);
 
         // Transform documents into plain objects
         const transformedHistories = histories.map((doc) => doc.toObject());

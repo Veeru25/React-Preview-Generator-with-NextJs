@@ -15,6 +15,7 @@
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.1.10",
     "framer-motion": "^11.15.0",
+    "lodash.debounce": "^4.0.8",
     "markdown": "^0.5.0",
     "markdown-to-jsx": "^7.7.1",
     "mongoose": "^8.8.3",
@@ -23,7 +24,9 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
+    "react-modal": "^3.16.3",
     "react-spinners": "^0.14.1",
+    "react-syntax-highlighter": "^15.6.1",
     "styled-components": "^6.1.13",
     "uuid": "^11.0.3"
   },

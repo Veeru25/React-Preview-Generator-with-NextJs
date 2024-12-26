@@ -17,12 +17,12 @@ const LoginPage =  () => {
     const loginDetails = { email, password };
     // console.log("loginDetails", loginDetails);
     await loginAction(loginDetails);
-    router.push("/");
+    router.push("https://react-preview-generator-with-next-js.vercel.app/");
   };
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.header}>Login Page</h1>
+      <h1 className={styles.header}>Login</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
         <label htmlFor="email" className={styles.labelInput}>Email : </label>
         <input

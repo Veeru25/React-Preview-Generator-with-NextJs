@@ -75,7 +75,7 @@ export const GET = async (req) => {
 
         // If no _id is provided, fetch all history records
         const histories = await HistoryModel.find().select('-_id');
-        console.log("Histories fetched successfully:", histories);
+        // console.log("Histories fetched successfully:", histories);
 
         return new Response(JSON.stringify({ success: true, data: histories }), { status: 200 });
     } catch (error) {

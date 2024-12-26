@@ -4,8 +4,8 @@
     flex-direction: column;
     height: 100vh;
     align-items: center;
-    background-color: #1e1e1e; /* Dark background */
-    color: #ffffff; /* White text for contrast */
+    background-color: #E0E0E0; /* Dark background */
+    color: #4A4A4D; /* White text for contrast */
     font-family: Arial, sans-serif;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
@@ -14,10 +14,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #2a2a2a; /* Slightly lighter dark background */
+    background-color: #f5f5f5; /* Slightly lighter dark background */
     padding: 20px;
     margin: 20px;
-    width: 25vw;
+    width: 30%;
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
   }
@@ -28,30 +28,34 @@
     margin-bottom: 15px;
     border: 1px solid #444;
     border-radius: 4px;
-    background-color: #3a3a3a;
-    color: #ffffff;
+    background-color: #E4E4E6;
+    color: #4A4A4D;
   }
-  
+/*   
   .input:focus {
     outline: none;
-    border-color: #0070f3; /* Highlighted border on focus */
+    border-color: #0070f3; 
     box-shadow: 0 0 5px rgba(0, 112, 243, 0.5);
   }
-  
+   */
   .button {
     width: 150px;
     padding: 10px;
     margin-top: 10px;
     border: none;
     border-radius: 4px;
-    background-color: #0070f3; /* Bright blue button */
-    color: #ffffff;
+    /* background-color: #0070f3; /* Bright blue button */
+    /* color: #ffffff; */
+    background-color: #E4E4E6;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    color: #4A4A4D;
     font-weight: bold;
     cursor: pointer;
   }
   
   .button:hover {
-    background-color: #005bb5; /* Darker blue on hover */
+    /* background-color: #005bb5; */
+    background-color:rgb(217 214 214);
   }
   
   .hr {
@@ -63,6 +67,6 @@
   .labelInput{
     text-align: left;
     margin: 10px 0;
-    color: #e5e5e5; /* Slightly dimmed white for headers */
+    color: #4A4A4D; /* Slightly dimmed white for headers */
   }
   

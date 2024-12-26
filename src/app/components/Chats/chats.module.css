@@ -307,8 +307,8 @@
 .newChatBtn,
 .sendBtn {
   margin: 0 10px;
-  background-color: #4a90e2;
-  color: #fff;
+  background-color: #4A4A4D;
+  /* color: #4A4A4D; */
   font-weight: bold;
   height: 56px; /* Set height to match the TextField */
   cursor: pointer;
@@ -316,7 +316,7 @@
   border: 0px;
   height: 56px;
   width: 55px; /* Adjusted width for laptops */
-  background-color: #000;
+  background-color: #4A4A4D;
 }
 
 .inputField {
@@ -326,6 +326,8 @@
   border-radius: 8px;
   border-width: 1px;
   margin-top: 5px;
+  background-color: #E0E0E0;
+  /* color: #4A4A4D; */
 }
 
 .header {
@@ -342,10 +344,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   height: 95vh;
   width: 100%;
-  background-color: #f0f4f8;
+  background-color: #3C3C3E;
+  background-color: #fff;
+  background-color: #E0E0E0;
 }
 
 
@@ -353,13 +357,15 @@
 .chatHistory {
   width: 75%; 
   padding-right: 10px;
-  background-color: #fff;
+  background-color: #707073;
+  
+  background-color: #f5f5f5;
   border-radius: 15px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   margin-bottom: 5px;
   overflow: auto;
-  scrollbar-width: none; 
-  -ms-overflow-style: none; 
+  /* scrollbar-width: none;  */
+  /* -ms-overflow-style: none;  */
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.6s ease, transform 0.6s ease;
@@ -384,7 +390,6 @@
 }
 
 .chatMessage {
-  padding: 8px;
   border-radius: 10px;
   max-width: 70%;
   font-size: 15px;
@@ -392,22 +397,23 @@
 }
 
 .userMessage {
-  background-color: #e1f5fe;
+  background-color: #E4E4E6;
   align-self: flex-end;
-  color: #0d47a1;
+  color: #4A4A4D;
+  padding: 8px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .gptMessage {
-  background-color: #e8eaf6;
+  padding: 8px;
+  background-color: #707073;
+  background-color: #f5f5f5;
   align-self: flex-start;
-  color: #1a237e;
+  color: #4A4A4D;
 }
 
-.reactHeading {
-  color: #2c3e50;
-  font-family: 'Poppins', sans-serif;
-  font-weight: bold;
-}
+
 
 /* Media query for laptops (900px to 1200px) */
 @media screen and (min-width: 900px) and (max-width: 1200px) {
@@ -453,7 +459,7 @@
 }
 
 .spanLoading { 
-  color: #4A90E2;
+  color: #4A4A4D;
 }
 
 .codeBox {
@@ -465,25 +471,31 @@
 
 .codeBox .copyButton {
   font-size: 18px;
-  width: 40px;
-  color: #fff;
+  width: 35px;
+  height:35px ;
+  color: #4A4A4D;
   padding: 4px;
   margin: 4px;
   border-width: 0px;
   border-radius: 5px;
-  background-color: #4dd0e1;
+  background-color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+.codeBlock{
+  background-color: #4A90E2;
 }
 
 .codeBox .copyButton:hover {
-  background-color: #009688;
+  background-color: #E4E4E6;
 }
 
 .codeBox .previewButton {
-  border: 1px solid #4caf50;
-  color: #4caf50;
+  border: 1px solid #4A4A4D;
+  color: #4A4A4D;
   margin-top: 10px;
   height: 40px;
   border-radius: 5px;
+  font-weight: bold;
   text-transform: none;
 }
 
@@ -491,9 +503,9 @@
   cursor: pointer;
 }
 
-.codeBox .previewButton:hover {
+/* .codeBox .previewButton:hover {
   background-color: #e8f5e9;
-}
+} */
 
 .codeBox pre {
   margin: 0;
@@ -563,9 +575,3 @@
   flex-direction: column;
   justify-content: flex-end;
 }
-
-
-
-
-
-
