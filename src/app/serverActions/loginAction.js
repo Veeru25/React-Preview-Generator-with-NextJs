@@ -9,7 +9,7 @@ export const loginAction = async (loginDetails) => {
         await signIn("credentials",{
             email:loginDetails.email,
             password:loginDetails.password,
-            redirectTo:"/"
+            redirectTo:"https://react-preview-generator-with-next-js.vercel.app/"
         })
     } catch (error) {
         console.log(error)
